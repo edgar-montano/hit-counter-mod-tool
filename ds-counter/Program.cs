@@ -16,6 +16,7 @@ namespace ds_counter
         public static int hitCounter = 0;
         public static string filePath = "";
         public static string gameName = "";
+        public static int damageOffset = 1; 
 
         static void Main(string[] args)
         {
@@ -33,8 +34,8 @@ namespace ds_counter
             else
             {
                 Console.WriteLine(@"No arguments specified.
-                    \nUsage: ./counter.exe game-name file-path base-addr\n
-                    \tExample: ./counter.exe DarkSoulsRemastered ./hitCounter.txt 0dcbd0f");
+                    Usage:   ./counter.exe <game-name> <file-path> <base-addr>
+                    Example: ./counter.exe DarkSoulsRemastered ./hitCounter.txt 0dcbd0f");
                 return;
             }
 
@@ -49,16 +50,20 @@ namespace ds_counter
             }
 
             int prevHealth = currHealth;
+            int totalDamageTaken = 0; 
             Console.WriteLine("Health address located current value:" + currHealth);
         
             while (true)
             {
                 // read current health from static pointer
                 currHealth = vam.ReadInt32((IntPtr)BaseAddr);
+                totalDamageTaken = prevHealth - currHealth;
                 // determine if a hit has been taken, if so write output to file
                 // TODO: if (currHealth < prevHealth) && (prevHealth-currHealth>=damageOffset)
                 if (currHealth < prevHealth)
                 {
+                    
+                    Console.WriteLine("Damage taken: " + totalDamageTaken);
                     Console.WriteLine("Hit taken! HitCouter:"+ ++hitCounter);
                     using (StreamWriter outputFile = new StreamWriter(filePath))
                     {
