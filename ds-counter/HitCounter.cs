@@ -57,10 +57,8 @@ namespace counter
          */
         private void displayVerbose(int curr, int dmg)
         {
-            Console.WriteLine("Hooked at {0}\n----------------", this.healthAddr);
-            Console.WriteLine("currHealth:{0}", curr);
-            Console.WriteLine("dmgTaken:{0} damageOffset:{1}", dmg, this.damageOffset);
-            Console.WriteLine("Current hit counter{0}\n----------------\n", this.hitCounter);
+            Console.WriteLine("Health:{0} |\tDamage:{1} |\tHit Counter: {2} |", curr, dmg, this.hitCounter);
+            Console.WriteLine("================================================");
         }
 
         public void hookGame()
