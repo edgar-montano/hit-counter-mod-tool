@@ -7,21 +7,16 @@ namespace program
 {
     class Program
     {
-        public static int BaseAddr = 0;
-        public static int currHealth = 0;
-        public static int hitCounter = 0;
-        public static string filePath = "";
-        public static string gameName = "";
-        public static int damageOffset = 1; 
-
         static void Main(string[] args)
         {
-           /* Set parameters, first game executable, base address and path for hitcounter file*/
-            if(args.Length>=3)
+            
+            /* Set parameters, first game executable, base address and path for hitcounter file*/
+            if (args.Length>=3)
             {
-                gameName = args[0];
-                filePath = args[1];
-                BaseAddr = int.Parse(args[2],System.Globalization.NumberStyles.HexNumber);
+                string gameName = args[0];
+                string filePath = args[1]; //TODO: Rework file path, no longer needed. dump all info to different files. 
+                long BaseAddr = long.Parse(args[2],System.Globalization.NumberStyles.HexNumber);
+                Console.WriteLine("max:{0} base:{1}",new IntPtr(Int64.MaxValue),BaseAddr);
                 HitCounter hc = new HitCounter(gameName, filePath, BaseAddr);
                 hc.setVerbose(true);
                 hc.hookGame(); 

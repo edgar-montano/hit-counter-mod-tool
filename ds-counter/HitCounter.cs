@@ -11,7 +11,7 @@ namespace counter
 {
     class HitCounter
     {
-        private  int healthAddr = 0;
+        private  long healthAddr = 0;
         private  int hitCounter = 0;
         private  string filePath = "";
         private  string gameName = "";
@@ -19,13 +19,14 @@ namespace counter
         private bool verbose = false;
         private int sleepTimer = 1000; 
 
-        public HitCounter(string game_name, string file_path, int addr) 
+        public HitCounter(string game_name, string file_path, long addr) 
         {
             this.gameName = game_name;
             this.filePath = file_path;
             this.healthAddr = addr;
             Console.WriteLine("{0} was opened at address: {1} and file {2} will be created.", game_name, addr, file_path);
         }
+
         /*
          * Set the default timer for each cycle to sleep for, default is 1000ms (1s). 
          */
@@ -55,7 +56,7 @@ namespace counter
          * It is not advise to use this for actual speedruns since it will incur extra 
          * overhead and wasted cpu cycles for the IO operations.
          */
-        private void displayVerbose(int curr, int dmg)
+        private void displayVerbose(long curr, long dmg)
         {
             Console.WriteLine("Health:{0} |\tDamage:{1} |\tHit Counter: {2} |", curr, dmg, this.hitCounter);
             Console.WriteLine("================================================");
@@ -66,16 +67,17 @@ namespace counter
             //Load VAM.dll and hook into game process, load health value from static pointer
             VAMemory vam = new VAMemory(this.gameName);
             //initialize variables used in main event loop.
-            int damageTaken, prevHealth, currHealth;
+            long damageTaken, prevHealth, currHealth;
+            
             //begin monitoring address value 
-            currHealth = vam.ReadInt32((IntPtr)this.healthAddr);
+            currHealth = vam.ReadInteger((IntPtr)this.healthAddr);
 
             // main logic loop
             while (true)
             {
                 // calculate damage taken for this cycle 
                 prevHealth = currHealth;
-                currHealth = vam.ReadInt32((IntPtr)this.healthAddr);
+                currHealth = vam.ReadInteger((IntPtr)this.healthAddr);
 
                 //set damageTaken to 0 otherwise damageTaken will be a negative value when healed. 
                 damageTaken = ((prevHealth - currHealth) > 0) ? (prevHealth - currHealth) : 0; 
