@@ -13,18 +13,16 @@ namespace counter
     {
         private  long healthAddr = 0;
         private  int hitCounter = 0;
-        private  string filePath = "";
         private  string gameName = "";
         private  int damageOffset = 1;
         private bool verbose = false;
         private int sleepTimer = 1000; 
 
-        public HitCounter(string game_name, string file_path, long addr) 
+        public HitCounter(string game_name,  long addr) 
         {
             this.gameName = game_name;
-            this.filePath = file_path;
             this.healthAddr = addr;
-            Console.WriteLine("{0} was opened at address: {1} and file {2} will be created.", game_name, addr, file_path);
+            Console.WriteLine("{0} was opened at address: {1} ", game_name, addr);
         }
 
         /*
@@ -62,6 +60,35 @@ namespace counter
             Console.WriteLine("================================================");
         }
 
+        private void writeFiles(long currHealth, long dmg, int hits)
+        {
+            try
+            {
+                using (StreamWriter sr_hits = new StreamWriter("hitcounter.txt"))
+                {
+                    sr_hits.WriteLine(hits);
+                }
+
+                using (StreamWriter sr_dmg = new StreamWriter("damagetaken.txt"))
+                {
+                    sr_dmg.WriteLine(dmg);
+                }
+
+                using (StreamWriter sr_health = new StreamWriter("health.txt"))
+                {
+                    sr_health.WriteLine(currHealth);
+                }
+            }
+            catch(IOException ioe)
+            {
+                Console.WriteLine(ioe.Message);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
         public void hookGame()
         {
             //Load VAM.dll and hook into game process, load health value from static pointer
@@ -86,10 +113,7 @@ namespace counter
                 if(damageTaken >= this.damageOffset)
                 {
                     Console.WriteLine("Hit taken! Hit counter: {0} ", ++this.hitCounter);
-                    using (StreamWriter outputFile = new StreamWriter(this.filePath))
-                    {
-                        outputFile.WriteLine(this.hitCounter);
-                    }
+                    writeFiles(currHealth, damageTaken, this.hitCounter);
                 }
 
                 // setVerbose() must be called to enable this verbose flag
