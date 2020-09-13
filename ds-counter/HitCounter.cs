@@ -59,7 +59,11 @@ namespace counter
             Console.WriteLine("Health:{0} |\tDamage:{1} |\tHit Counter: {2} |", curr, dmg, this.hitCounter);
             Console.WriteLine("================================================");
         }
-
+        /*
+         * Writes hits to hitcounter.txt, damage taken for current cycle to damagetaken.txt
+         * and current health to health.txt. Useful for analyctics or displaying damage
+         * stats on games that do not have such. 
+         */
         private void writeFiles(long currHealth, long dmg, int hits)
         {
             try
@@ -88,7 +92,10 @@ namespace counter
                 Console.WriteLine(e.Message);
             }
         }
-
+        /*
+         * Main event loop for hooking and monitoring the game. Call once 
+         * after values have been initialized. 
+         */
         public void hookGame()
         {
             //Load VAM.dll and hook into game process, load health value from static pointer
@@ -96,10 +103,10 @@ namespace counter
             //initialize variables used in main event loop.
             long damageTaken, prevHealth, currHealth;
             
-            //begin monitoring address value 
+            //begin monitoring address value, must initialize before loop otherwise prevHealth will be invalid. 
             currHealth = vam.ReadInteger((IntPtr)this.healthAddr);
 
-            // main logic loop
+            // event loop
             while (true)
             {
                 // calculate damage taken for this cycle 
